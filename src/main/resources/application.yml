@@ -1,0 +1,39 @@
+server:
+  port: 8080
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+spring:
+  application:
+    name: gateway-service
+
+  cloud:
+    gateway:
+      routes:
+        - id: auth-service
+          uri: ${AUTH_SERVICE:http://localhost:8081}
+          predicates:
+            - Path=/login,/registration,/getUserInfo,/upload-profile-picture,/registrationAddInfo,/getUserInfoRefreshToken,/emailVerification,/verifyCode
+          filters:
+            # Переписываем
+            # /login → /PlaceAndPlay/api/auth/login
+            # /registration → /PlaceAndPlay/api/auth/registration
+            # /getUserInfo -> /PlaceAndPlay/api/auth/getUserInfo
+            # /upload-profile-picture -> /PlaceAndPlay/api/auth/upload-profile-picture
+            # /registrationAddInfo -> /PlaceAndPlay/api/auth/registrationAddInfo
+            # /getUserInfoRefreshToken -> /PlaceAndPlay/api/auth/getUserInfoRefreshToken
+            # /emailVerification -> /PlaceAndPlay/api/auth/emailVerification
+            # /verifyCode -> /PlaceAndPlay/api/auth/verifyCode
+            - RewritePath=^/(login|registration|getUserInfo|upload-profile-picture|registrationAddInfo|getUserInfoRefreshToken|emailVerification|verifyCode)$,/PlaceAndPlay/api/auth/$1
+
+        - id: organizations-service
+          uri: ${ORGANIZATIONS_SERVICE:http://localhost:8082}
+          predicates:
+            - Path=/organization/login,/organization/registration,/organization/orgInfo
+          filters:
+            # Переписываем
+            # /login → /PlaceAndPlay/api/auth/organization/login
+            # /registration → /PlaceAndPlay/api/auth/organization/registration
+            # /orgInfo -> /PlaceAndPlay/api/auth/organization/orgInfo
+            - RewritePath=^/(organization/login|organization/registration|organization/orgInfo)$,/PlaceAndPlay/api/auth/$1
