@@ -26,6 +26,6 @@ public class LogRequestFilter implements GatewayFilter, Ordered {
 
     @Override
     public int getOrder() {
-        return -1; // Убедись, что фильтр логирования выполняется раньше переписывания URL
+        return -2; // Убедись, что фильтр логирования выполняется раньше переписывания URL
     }
 }
